@@ -7,8 +7,11 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
-  .split(",")
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ndinda-expense-tracker.vercel.app",
+  ...(process.env.CLIENT_URL || "").split(","),
+]
   .map((origin) => origin.trim())
   .filter(Boolean);
 
