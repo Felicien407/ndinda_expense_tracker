@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { jsPDF } from "jspdf";
 import {
   addExpense,
   getExpenses,
@@ -118,6 +119,41 @@ function App() {
     }
   };
 
+  const downloadReport = () => {
+    const report = new jsPDF();
+    let yPosition = 20;
+
+    report.setFontSize(18);
+    report.text("Expense Report", 20, yPosition);
+    yPosition += 10;
+    report.setFontSize(11);
+    report.text(`Total spent: ${money.format(total)}`, 20, yPosition);
+    yPosition += 14;
+
+    expenses.forEach((expense) => {
+      const line = `${expense.title} | ${money.format(expense.amount)} | ${expense.category} | ${new Date(expense.date).toLocaleDateString()}`;
+      const lines = report.splitTextToSize(line, 170);
+      report.text(lines, 20, yPosition);
+      yPosition += lines.length * 6;
+
+      if (expense.notes) {
+        const noteLines = report.splitTextToSize(`Note: ${expense.notes}`, 165);
+        report.setFontSize(9);
+        report.text(noteLines, 25, yPosition);
+        report.setFontSize(11);
+        yPosition += noteLines.length * 5;
+      }
+
+      yPosition += 4;
+      if (yPosition > 275) {
+        report.addPage();
+        yPosition = 20;
+      }
+    });
+
+    report.save("expense-report.pdf");
+  };
+
   return (
     <main className="app-shell">
       <header className="header">
@@ -153,6 +189,7 @@ function App() {
           <div className="section-heading"><h2>Recent expenses</h2><span>{expenses.length} items</span></div>
           {message && <p className="message">{message}</p>}
           {expenses.length === 0 && !message ? <p className="empty">No expenses yet.</p> : <div className="expense-list">{expenses.map((expense) => <article className="expense-row" key={expense._id}><div><strong>{expense.title}</strong><span>{expense.category} · {new Date(expense.date).toLocaleDateString()}</span>{expense.notes && <small className="expense-note">Note: {expense.notes}</small>}</div><div className="row-end"><strong>{money.format(expense.amount)}</strong><button className="edit-button" type="button" onClick={() => editExpense(expense)}>Edit</button><button className="delete-button" type="button" onClick={() => deleteExpense(expense._id)} aria-label={`Delete ${expense.title}`}>×</button></div></article>)}</div>}
+          <button className="report-button" type="button" onClick={downloadReport} disabled={expenses.length === 0}>Download PDF report</button>
         </section>
       </div>
     </main>
