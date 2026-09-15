@@ -1,5 +1,10 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { addExpense, getExpenses, removeExpense } from "./services/api";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  addExpense,
+  getExpenses,
+  removeExpense,
+  updateExpense,
+} from "./services/api";
 import type { Expense, ExpenseInput } from "./types";
 
 const emptyForm: ExpenseInput = {
@@ -12,12 +17,13 @@ const emptyForm: ExpenseInput = {
 
 const money = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "USD",
+  currency: "RWF",
 });
 
 function App() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState("Loading expenses...");
 
   useEffect(() => {
@@ -41,19 +47,52 @@ function App() {
   const submitExpense = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const created = await addExpense(form);
-      setExpenses((current) => [created, ...current]);
+      if (editingId) {
+        const updated = await updateExpense(editingId, form);
+        setExpenses((current) =>
+          current.map((expense) =>
+            expense._id === editingId ? updated : expense,
+          ),
+        );
+        setMessage("Expense updated.");
+      } else {
+        const created = await addExpense(form);
+        setExpenses((current) => [created, ...current]);
+        setMessage("Expense added.");
+      }
       setForm(emptyForm);
-      setMessage("Expense added.");
+      setEditingId(null);
     } catch {
       setMessage("Could not save expense. Check the API and MongoDB.");
     }
   };
 
+  const editExpense = (expense: Expense) => {
+    setEditingId(expense._id);
+    setForm({
+      title: expense.title,
+      amount: expense.amount,
+      category: expense.category,
+      date: expense.date.slice(0, 10),
+      notes: expense.notes || "",
+    });
+    setMessage("");
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+    setMessage("");
+  };
+
   const deleteExpense = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this expense?")) return;
+
     try {
       await removeExpense(id);
       setExpenses((current) => current.filter((expense) => expense._id !== id));
+      if (editingId === id) cancelEdit();
+      setMessage("Expense deleted.");
     } catch {
       setMessage("Could not delete expense.");
     }
@@ -75,21 +114,22 @@ function App() {
 
       <div className="layout">
         <section className="panel">
-          <h2>Add an expense</h2>
+          <h2>{editingId ? "Edit expense" : "Add an expense"}</h2>
           <form onSubmit={submitExpense}>
             <label>Title<input required value={form.title} onChange={(event) => updateForm("title", event.target.value)} placeholder="Coffee" /></label>
             <label>Amount<input required min="0" step="0.01" type="number" value={form.amount || ""} onChange={(event) => updateForm("amount", Number(event.target.value))} placeholder="0.00" /></label>
             <label>Category<select value={form.category} onChange={(event) => updateForm("category", event.target.value)}><option>Food</option><option>Transport</option><option>Bills</option><option>Shopping</option><option>Other</option></select></label>
             <label>Date<input required type="date" value={form.date} onChange={(event) => updateForm("date", event.target.value)} /></label>
             <label>Notes<textarea value={form.notes} onChange={(event) => updateForm("notes", event.target.value)} placeholder="Optional note" rows={3} /></label>
-            <button type="submit">Add expense</button>
+            <button type="submit">{editingId ? "Save changes" : "Add expense"}</button>
+            {editingId && <button className="cancel-button" type="button" onClick={cancelEdit}>Cancel</button>}
           </form>
         </section>
 
         <section className="panel">
           <div className="section-heading"><h2>Recent expenses</h2><span>{expenses.length} items</span></div>
           {message && <p className="message">{message}</p>}
-          {expenses.length === 0 && !message ? <p className="empty">No expenses yet.</p> : <div className="expense-list">{expenses.map((expense) => <article className="expense-row" key={expense._id}><div><strong>{expense.title}</strong><span>{expense.category} · {new Date(expense.date).toLocaleDateString()}</span></div><div className="row-end"><strong>{money.format(expense.amount)}</strong><button className="delete-button" type="button" onClick={() => deleteExpense(expense._id)} aria-label={`Delete ${expense.title}`}>×</button></div></article>)}</div>}
+          {expenses.length === 0 && !message ? <p className="empty">No expenses yet.</p> : <div className="expense-list">{expenses.map((expense) => <article className="expense-row" key={expense._id}><div><strong>{expense.title}</strong><span>{expense.category} · {new Date(expense.date).toLocaleDateString()}</span></div><div className="row-end"><strong>{money.format(expense.amount)}</strong><button className="edit-button" type="button" onClick={() => editExpense(expense)}>Edit</button><button className="delete-button" type="button" onClick={() => deleteExpense(expense._id)} aria-label={`Delete ${expense.title}`}>×</button></div></article>)}</div>}
         </section>
       </div>
     </main>

@@ -21,6 +21,16 @@ export const createExpense = async (req, res) => {
   res.status(201).json(expense);
 };
 
+export const updateExpense = async (req, res) => {
+  if (databaseUnavailable(res)) return;
+  const expense = await Expense.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!expense) return res.status(404).json({ message: "Expense not found" });
+  res.json(expense);
+};
+
 export const deleteExpense = async (req, res) => {
   if (databaseUnavailable(res)) return;
   const expense = await Expense.findByIdAndDelete(req.params.id);

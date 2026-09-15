@@ -8,4 +8,6 @@ const api = axios.create({
 export const getExpenses = async () => (await api.get<Expense[]>("/expenses")).data;
 export const addExpense = async (expense: ExpenseInput) =>
   (await api.post<Expense>("/expenses", expense)).data;
+export const updateExpense = async (id: string, expense: ExpenseInput) =>
+  (await api.put<Expense>(`/expenses/${id}`, expense)).data;
 export const removeExpense = async (id: string) => api.delete(`/expenses/${id}`);

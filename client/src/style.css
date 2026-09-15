@@ -23,12 +23,16 @@ input, select, textarea { width: 100%; margin-top: 7px; padding: 10px; color: #2
 input:focus, select:focus, textarea:focus { border-color: #db6c46; }
 button[type="submit"] { width: 100%; padding: 12px; border: 0; color: white; background: #203c32; font-weight: 700; cursor: pointer; }
 button[type="submit"]:hover { background: #315a4b; }
+.cancel-button { width: 100%; margin-top: 8px; padding: 10px; border: 1px solid #d8d8ce; color: #20312b; background: transparent; cursor: pointer; }
+.cancel-button:hover { background: #f4f1ea; }
 .message, .empty { color: #879087; font-size: 13px; }
 .expense-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 17px 0; border-bottom: 1px solid #e3e3da; }
 .expense-row:last-child { border-bottom: 0; }
 .expense-row strong { display: block; font-size: 13px; }
 .expense-row span { display: block; margin-top: 5px; color: #879087; font-size: 11px; }
 .row-end { display: flex; align-items: center; gap: 14px; }
+.edit-button { padding: 4px 0; border: 0; color: #557368; background: transparent; font-size: 11px; cursor: pointer; }
+.edit-button:hover { color: #203c32; text-decoration: underline; }
 .delete-button { border: 0; color: #a2aaa2; background: transparent; font-size: 21px; cursor: pointer; }
 .delete-button:hover { color: #db6c46; }
 @media (max-width: 700px) { .app-shell { padding: 28px 16px 48px; } .header { display: block; } .total-card { margin-top: 24px; } .layout { grid-template-columns: 1fr; } }
