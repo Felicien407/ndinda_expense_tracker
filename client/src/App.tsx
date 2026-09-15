@@ -3,8 +3,10 @@ import {
   addExpense,
   getExpenses,
   removeExpense,
+  tokenKey,
   updateExpense,
 } from "./services/api";
+import Auth from "./Auth";
 import type { Expense, ExpenseInput } from "./types";
 
 const emptyForm: ExpenseInput = {
@@ -21,24 +23,42 @@ const money = new Intl.NumberFormat("en-US", {
 });
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => Boolean(localStorage.getItem(tokenKey)),
+  );
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState("Loading expenses...");
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
+    setMessage("Loading expenses...");
     getExpenses()
       .then((data) => {
         setExpenses(data);
         setMessage("");
       })
       .catch(() => setMessage("Connect MongoDB to load saved expenses."));
-  }, []);
+  }, [isAuthenticated]);
 
   const total = useMemo(
     () => expenses.reduce((sum, expense) => sum + expense.amount, 0),
     [expenses],
   );
+
+  if (!isAuthenticated) {
+    return <Auth onAuthenticated={() => setIsAuthenticated(true)} />;
+  }
+
+  const logout = () => {
+    localStorage.removeItem(tokenKey);
+    setExpenses([]);
+    setForm(emptyForm);
+    setEditingId(null);
+    setIsAuthenticated(false);
+  };
 
   const updateForm = (field: keyof ExpenseInput, value: string | number) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -106,9 +126,12 @@ function App() {
           <h1>Expense Tracker</h1>
           <p className="subtitle">Keep your everyday spending simple and visible.</p>
         </div>
-        <div className="total-card">
-          <span>Total spent</span>
-          <strong>{money.format(total)}</strong>
+        <div className="header-actions">
+          <div className="total-card">
+            <span>Total spent</span>
+            <strong>{money.format(total)}</strong>
+          </div>
+          <button className="logout-button" type="button" onClick={logout}>Log out</button>
         </div>
       </header>
 

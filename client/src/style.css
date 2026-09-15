@@ -13,6 +13,9 @@ h2 { margin: 0; font-size: 20px; }
 .total-card { min-width: 180px; padding: 20px; color: white; background: #db6c46; }
 .total-card span { display: block; margin-bottom: 10px; font-size: 11px; text-transform: uppercase; }
 .total-card strong { font-size: 27px; }
+.header-actions { display: flex; align-items: end; gap: 12px; }
+.logout-button { padding: 9px 12px; border: 1px solid #d8d8ce; color: #20312b; background: transparent; font-size: 12px; cursor: pointer; }
+.logout-button:hover { background: #fbfaf6; }
 .layout { display: grid; grid-template-columns: 300px 1fr; gap: 24px; padding-top: 32px; }
 .panel { padding: 24px; background: #fbfaf6; border: 1px solid #deded4; }
 .panel > h2, .section-heading { margin-bottom: 24px; }
@@ -36,4 +39,15 @@ button[type="submit"]:hover { background: #315a4b; }
 .edit-button:hover { color: #203c32; text-decoration: underline; }
 .delete-button { border: 0; color: #a2aaa2; background: transparent; font-size: 21px; cursor: pointer; }
 .delete-button:hover { color: #db6c46; }
+.auth-shell { display: grid; min-height: 100vh; place-items: center; padding: 24px; }
+.auth-card { width: min(100%, 400px); padding: 32px; background: #fbfaf6; border: 1px solid #deded4; }
+.auth-card h1 { margin-bottom: 12px; font-size: clamp(32px, 7vw, 48px); }
+.auth-card .subtitle { margin-bottom: 28px; }
+.auth-tabs { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 24px; border-bottom: 1px solid #d8d8ce; }
+.auth-tabs button { padding: 10px; border: 0; border-bottom: 2px solid transparent; color: #879087; background: transparent; cursor: pointer; }
+.auth-tabs button.active-tab { border-bottom-color: #db6c46; color: #20312b; font-weight: 700; }
+.auth-submit { width: 100%; padding: 12px; border: 0; color: white; background: #203c32; font-weight: 700; cursor: pointer; }
+.auth-submit:hover { background: #315a4b; }
+.auth-submit:disabled { background: #879087; cursor: wait; }
+.auth-error { color: #b24f35; font-size: 13px; }
 @media (max-width: 700px) { .app-shell { padding: 28px 16px 48px; } .header { display: block; } .total-card { margin-top: 24px; } .layout { grid-template-columns: 1fr; } }

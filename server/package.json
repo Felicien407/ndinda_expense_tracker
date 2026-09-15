@@ -24,10 +24,12 @@
     "test": "node --test"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.10.1",
     "npm": "^11.19.1"
   },

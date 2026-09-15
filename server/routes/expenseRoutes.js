@@ -5,8 +5,11 @@ import {
   getExpenses,
   updateExpense,
 } from "../controllers/expenseController.js";
+import protect from "../middleware/authMiddleware.js";
 
 const router = Router();
+
+router.use(protect);
 
 router.get("/", getExpenses);
 router.post("/", createExpense);

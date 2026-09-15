@@ -23,6 +23,7 @@ Create `server/.env`:
 ```env
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/expense_tracker
+JWT_SECRET=replace-this-with-a-long-random-secret
 
 # Optional frontend URL allowed by the API
 CLIENT_URL=http://localhost:5173
@@ -37,12 +38,22 @@ cd client && npm run dev
 
 The frontend runs at `http://localhost:5173` and the API runs at `http://localhost:5000`.
 
+## Authentication
+
+The app starts with Login and Sign up pages backed by the Express API. Passwords are hashed with bcrypt, and successful login returns a JWT stored by the client for authenticated requests. Each user's expenses are kept separate.
+
 ## API Basics
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
+| POST | `/api/auth/register` | Create an account |
+| POST | `/api/auth/login` | Log in and receive a JWT |
+| GET | `/api/auth/me` | Get the current user |
 | GET | `/api/expenses` | List expenses |
 | POST | `/api/expenses` | Create an expense |
+| PUT | `/api/expenses/:id` | Update an expense |
 | DELETE | `/api/expenses/:id` | Delete an expense |
+
+Expense endpoints require an `Authorization: Bearer <token>` header.
 
 Expense fields are `title`, `amount`, `category`, `date`, and optional `notes`. Amounts are stored as numbers and displayed as RWF.
