@@ -38,6 +38,14 @@ cd client && npm run dev
 
 The frontend runs at `http://localhost:5173` and the API runs at `http://localhost:5000`.
 
+For the deployed frontend, set these environment variables in Vercel:
+
+```env
+VITE_API_URL=https://your-backend-domain.example.com/api
+```
+
+Set the backend `CLIENT_URL` to `https://ndinda-expense-tracker.vercel.app` (or include it alongside the local frontend URL, separated by a comma).
+
 ## Authentication
 
 The app starts with Login and Sign up pages backed by the Express API. Passwords are hashed with bcrypt, and successful login returns a JWT stored by the client for authenticated requests. Each user's expenses are kept separate.
