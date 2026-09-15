@@ -129,7 +129,7 @@ function App() {
         <section className="panel">
           <div className="section-heading"><h2>Recent expenses</h2><span>{expenses.length} items</span></div>
           {message && <p className="message">{message}</p>}
-          {expenses.length === 0 && !message ? <p className="empty">No expenses yet.</p> : <div className="expense-list">{expenses.map((expense) => <article className="expense-row" key={expense._id}><div><strong>{expense.title}</strong><span>{expense.category} · {new Date(expense.date).toLocaleDateString()}</span></div><div className="row-end"><strong>{money.format(expense.amount)}</strong><button className="edit-button" type="button" onClick={() => editExpense(expense)}>Edit</button><button className="delete-button" type="button" onClick={() => deleteExpense(expense._id)} aria-label={`Delete ${expense.title}`}>×</button></div></article>)}</div>}
+          {expenses.length === 0 && !message ? <p className="empty">No expenses yet.</p> : <div className="expense-list">{expenses.map((expense) => <article className="expense-row" key={expense._id}><div><strong>{expense.title}</strong><span>{expense.category} · {new Date(expense.date).toLocaleDateString()}</span>{expense.notes && <small className="expense-note">Note: {expense.notes}</small>}</div><div className="row-end"><strong>{money.format(expense.amount)}</strong><button className="edit-button" type="button" onClick={() => editExpense(expense)}>Edit</button><button className="delete-button" type="button" onClick={() => deleteExpense(expense._id)} aria-label={`Delete ${expense.title}`}>×</button></div></article>)}</div>}
         </section>
       </div>
     </main>

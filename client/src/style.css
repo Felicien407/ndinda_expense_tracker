@@ -30,6 +30,7 @@ button[type="submit"]:hover { background: #315a4b; }
 .expense-row:last-child { border-bottom: 0; }
 .expense-row strong { display: block; font-size: 13px; }
 .expense-row span { display: block; margin-top: 5px; color: #879087; font-size: 11px; }
+.expense-note { display: block; max-width: 420px; margin-top: 6px; color: #68756c; font-size: 12px; }
 .row-end { display: flex; align-items: center; gap: 14px; }
 .edit-button { padding: 4px 0; border: 0; color: #557368; background: transparent; font-size: 11px; cursor: pointer; }
 .edit-button:hover { color: #203c32; text-decoration: underline; }
