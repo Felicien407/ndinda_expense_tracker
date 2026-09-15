@@ -33,3 +33,13 @@ cd client && npm run dev
 ```
 
 The frontend runs at `http://localhost:5173` and the API runs at `http://localhost:5000`.
+
+## API Basics
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/api/expenses` | List expenses |
+| POST | `/api/expenses` | Create an expense |
+| DELETE | `/api/expenses/:id` | Delete an expense |
+
+Expense fields are `title`, `amount`, `category`, `date`, and optional `notes`.

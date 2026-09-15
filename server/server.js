@@ -1,18 +1,27 @@
-import epxress from "express";
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import connectDB from "./config/db.js";
+import expenseRoutes from "./routes/expenseRoutes.js";
 dotenv.config();
 
-const app = epxress();
+const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(epxress.json());
+app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
+app.use(express.json());
+
+app.use("/api/expenses", expenseRoutes);
 
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.json({ message: "Expense Tracker API is running" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+startServer();
