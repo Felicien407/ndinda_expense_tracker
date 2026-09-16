@@ -4,7 +4,7 @@ import type { Expense, ExpenseInput } from "../types";
 export const tokenKey = "expense_tracker_token";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://ndinda-expense-tracker.onrender.com/api",
+  baseURL: import.meta.env.API_URL || "https://ndinda-expense-tracker.onrender.com/api",
 });
 
 api.interceptors.request.use((config) => {

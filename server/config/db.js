@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const connectDB = async () => {
-  const mongoUri = process.env.MONGO_ATLAS_URI || process.env.MONGO_URI;
+  const mongoUri = process.env.MONGO_ATLAS_URI;
 
   if (!mongoUri) {
     console.warn("MONGO_URI is not set; start the server with database features disabled");
