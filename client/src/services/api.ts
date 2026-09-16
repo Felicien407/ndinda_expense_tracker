@@ -1,45 +1,27 @@
+import axios from "axios";
 import type { Expense, ExpenseInput } from "../types";
 
 export const tokenKey = "expense_tracker_token";
 
-const baseURL =
-  (import.meta as ImportMeta & { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL ||
-  "https://ndinda-expense-tracker.onrender.com/api";
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "https://ndinda-expense-tracker.onrender.com/api",
+});
 
-const request = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem(tokenKey);
-  const response = await fetch(`${baseURL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error((await response.text()) || `Request failed: ${response.status}`);
-  }
-
-  return response.status === 204 ? (undefined as T) : response.json();
-};
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 export const register = async (name: string, email: string, password: string) =>
-  request("/auth/register", {
-    method: "POST",
-    body: JSON.stringify({ name, email, password }),
-  });
+  (await api.post("/auth/register", { name, email, password })).data;
 
 export const login = async (email: string, password: string) =>
-  request<{ token: string }>("/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
+  (await api.post<{ token: string }>("/auth/login", { email, password })).data;
 
-export const getExpenses = async () => request<Expense[]>("/expenses");
+export const getExpenses = async () => (await api.get<Expense[]>("/expenses")).data;
 export const addExpense = async (expense: ExpenseInput) =>
-  request<Expense>("/expenses", { method: "POST", body: JSON.stringify(expense) });
+  (await api.post<Expense>("/expenses", expense)).data;
 export const updateExpense = async (id: string, expense: ExpenseInput) =>
-  request<Expense>(`/expenses/${id}`, { method: "PUT", body: JSON.stringify(expense) });
-export const removeExpense = async (id: string) =>
-  request<void>(`/expenses/${id}`, { method: "DELETE" });
+  (await api.put<Expense>(`/expenses/${id}`, expense)).data;
+export const removeExpense = async (id: string) => api.delete(`/expenses/${id}`);
